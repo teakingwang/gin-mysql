@@ -1,9 +1,11 @@
 package service
 
 import (
+	"github.com/teakingwang/gin-mysql/config"
+	"github.com/teakingwang/gin-mysql/internal/models"
+	"github.com/teakingwang/gin-mysql/internal/repository"
+	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"my-gin-app/config"
-	"my-gin-app/internal/repository"
 )
 
 type UserService struct {
@@ -24,8 +26,4 @@ func NewUserService() *UserService {
 
 func (service *UserService) GetAllUsers() ([]models.User, error) {
 	return service.userRepo.GetAllUsers()
-}
-
-func (service *UserService) CreateUser(user *models.User) error {
-	return service.userRepo.CreateUser(user)
 }

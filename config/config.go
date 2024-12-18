@@ -4,7 +4,9 @@ import (
 	"github.com/spf13/viper"
 )
 
-type Config struct {
+var Config *config
+
+type config struct {
 	Server   ServerConfig
 	Database DatabaseConfig
 }
@@ -17,8 +19,9 @@ type DatabaseConfig struct {
 	DSN string
 }
 
-func LoadConfig() *Config {
-	viper.SetConfigName("config")
+func LoadConfig() *config {
+	cfgPath := "./resources/config.yaml" //viper.GetString("config")
+	viper.SetConfigName(cfgPath)
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath(".")
 
@@ -26,10 +29,11 @@ func LoadConfig() *Config {
 		panic(err)
 	}
 
-	var config Config
-	if err := viper.Unmarshal(&config); err != nil {
+	var cfg *config
+	if err := viper.Unmarshal(&cfg); err != nil {
 		panic(err)
 	}
+	Config = cfg
 
-	return &config
+	return cfg
 }

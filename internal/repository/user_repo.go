@@ -1,9 +1,8 @@
 package repository
 
 import (
+	"github.com/teakingwang/gin-mysql/internal/models"
 	"gorm.io/gorm"
-	"my-gin-app/config"
-	"my-gin-app/internal/models"
 )
 
 type UserRepo struct {
@@ -22,9 +21,4 @@ func (repo *UserRepo) GetAllUsers() ([]models.User, error) {
 	var users []models.User
 	result := repo.db.Find(&users)
 	return users, result.Error
-}
-
-func (repo *UserRepo) CreateUser(user *models.User) error {
-	result := repo.db.Create(user)
-	return result.Error
 }

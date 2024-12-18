@@ -1,26 +1,21 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
-	"log"
-	"my-gin-app/config"
-	"my-gin-app/internal/app"
+	"github.com/teakingwang/gin-mysql/cmd/app"
+	"math/rand"
+	"os"
+	"runtime"
+	"time"
 )
 
 func main() {
-	cfg := config.LoadConfig()
-
-	r := gin.Default()
-
-	// Register routes
-	userRoutes := r.Group("/api/v1/users")
-	{
-		userRoutes.GET("", app.GetUserList)
-		userRoutes.POST("", app.CreateUser)
+	rand.Seed(time.Now().UTC().UnixNano())
+	if len(os.Getenv("GOMAXPROCS")) == 0 {
+		runtime.GOMAXPROCS(runtime.NumCPU())
 	}
+	command := app.NewServerCommand()
 
-	// Start server
-	if err := r.Run(":" + cfg.Server.Port); err != nil {
-		log.Fatalf("Failed to start server: %v", err)
+	if err := command.Execute(); err != nil {
+		os.Exit(1)
 	}
 }
