@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/sirupsen/logrus"
 	"github.com/teakingwang/gin-mysql/cmd/app"
 	"math/rand"
 	"os"
@@ -16,6 +17,7 @@ func main() {
 	command := app.NewServerCommand()
 
 	if err := command.Execute(); err != nil {
+		logrus.Error(err)
 		os.Exit(1)
 	}
 }

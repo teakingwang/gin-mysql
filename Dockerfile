@@ -16,17 +16,17 @@ RUN go mod download
 COPY . .
 
 # Build the Go app
-RUN go build -o my-gin-app .
+RUN go build -o gin-mysql .
 
 # Use a lightweight base image to run the built binary
 FROM alpine:latest AS runner
 WORKDIR /root/
 
 # Copy the Pre-built binary file from the previous stage
-COPY --from=builder /app/my-gin-app .
+COPY --from=builder /app/gin-mysql .
 
 # Make the binary executable
-RUN chmod +x my-gin-app
+RUN chmod +x gin-mysql
 
 # Expose port 8080 to the Docker host
 EXPOSE 8080
@@ -35,4 +35,4 @@ EXPOSE 8080
 ENV NAME World
 
 # Run the application
-CMD ["./my-gin-app"]
+CMD ["./gin-mysql"]

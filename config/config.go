@@ -12,6 +12,7 @@ type config struct {
 }
 
 type ServerConfig struct {
+	Host string
 	Port string
 }
 
@@ -20,10 +21,11 @@ type DatabaseConfig struct {
 }
 
 func LoadConfig() *config {
-	cfgPath := "./resources/config.yaml" //viper.GetString("config")
+	cfgPath := viper.GetString("config")
 	viper.SetConfigName(cfgPath)
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath(".")
+	viper.AutomaticEnv()
 
 	if err := viper.ReadInConfig(); err != nil {
 		panic(err)
