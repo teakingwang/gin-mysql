@@ -23,13 +23,16 @@ func (s *Server) Run() {
 	// load config
 	config.LoadConfig()
 	// 初始化db
-	db.InitDB()
+	gormDB, err := db.NewDB()
+	if err != nil {
+		panic(err)
+	}
 	// 数据库迁移
-	db.MigrateDB(db.GormDB)
+	db.MigrateDB(gormDB)
 
 	// router
 	s.router = NewRouter(net.JoinHostPort(config.Config.Server.Host, config.Config.Server.Port))
-	s.router.Config()
+	s.router.Config(gormDB)
 	s.router.Run()
 
 	select {}
@@ -38,7 +41,7 @@ func (s *Server) Run() {
 func NewServerCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:          "server",
-		Long:         `The server is demo mvc project`,
+		Long:         `The server is gin-mysql demo`,
 		SilenceUsage: true,
 		Run: func(cmd *cobra.Command, args []string) {
 			server.Run()
@@ -53,8 +56,11 @@ func NewServerCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringP("config", "c", "", "config file (default is $HOME/.cobra.yaml)")
-	viper.BindPFlags(cmd.Flags())
+	cmd.Flags().StringP("config", "c", "config.yaml", "config file (default is ./resources/config.yaml)")
+	err := viper.BindPFlags(cmd.Flags())
+	if err != nil {
+		panic(err)
+	}
 
 	return cmd
 }

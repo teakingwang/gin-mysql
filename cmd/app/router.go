@@ -2,7 +2,8 @@ package app
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/teakingwang/gin-mysql/internal/app"
+	"github.com/teakingwang/gin-mysql/internal/controller"
+	"gorm.io/gorm"
 )
 
 type Router struct {
@@ -17,11 +18,14 @@ func NewRouter(addr string) *Router {
 	}
 }
 
-func (r *Router) Config() {
+func (r *Router) Config(db *gorm.DB) {
 	r.router.MaxMultipartMemory = 8 << 20 // 8 MiB
 
 	v := r.router.Group("/v1/user")
-	v.GET("", app.GetUserList)
+	{
+		userController := controller.NewUserController(db)
+		v.GET("", userController.GetUserList)
+	}
 }
 
 func (r *Router) Run() {

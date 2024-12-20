@@ -4,7 +4,7 @@
 MAIN_FILE=./cmd/main.go
 
 # 设置输出可执行文件的名称和路径
-OUTPUT_FILE=./app
+OUTPUT_FILE=./gin-mysql
 
 # 确保输出目录存在
 mkdir -p $(dirname "$OUTPUT_FILE")

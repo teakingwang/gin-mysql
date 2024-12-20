@@ -1,5 +1,13 @@
-Server:
-  Port: "8080"
+server:
+  host: "127.0.0.1"
+  port: "8080"
 
-Database:
-  DSN: "user:123456@tcp(127.0.0.1:3306)/user?charset=utf8mb4&parseTime=True&loc=Local"
+database:
+  host: 127.0.0.1
+  port: 5432
+  user: user
+  password: 123456
+  database: user
+  schema: public
+  dialect: postgres
+  level: info # 1:Silent 2:Error 3:Warn 4:Info 值越小级别越高

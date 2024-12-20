@@ -17,14 +17,20 @@ type ServerConfig struct {
 }
 
 type DatabaseConfig struct {
-	DSN string
+	Dialect  string `yaml:"dialect" json:"dialect"`
+	Host     string `yaml:"host" json:"host"`
+	Port     string `yaml:"port" json:"port"`
+	Database string `yaml:"database" json:"database"`
+	User     string `yaml:"user" json:"user"`
+	Password string `yaml:"password" json:"password"`
+	Schema   string `yaml:"schema" json:"schema"`
+	Level    string `yaml:"level" json:"level"`
 }
 
 func LoadConfig() *config {
-	cfgPath := viper.GetString("config")
-	viper.SetConfigName(cfgPath)
+	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
-	viper.AddConfigPath(".")
+	viper.AddConfigPath("./resources")
 	viper.AutomaticEnv()
 
 	if err := viper.ReadInConfig(); err != nil {
@@ -37,5 +43,5 @@ func LoadConfig() *config {
 	}
 	Config = cfg
 
-	return cfg
+	return Config
 }

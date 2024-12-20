@@ -1,32 +1,23 @@
 package db
 
 import (
+	"fmt"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/teakingwang/gin-mysql/config"
-	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
-	"time"
 )
 
-var GormDB *gorm.DB
+func NewDB() (*gorm.DB, error) {
+	var gdb *gorm.DB
 
-func InitDB() *gorm.DB {
-	dsn := config.Config.Database.DSN
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
-	})
-	if err != nil {
-		panic(err)
+	c := &config.Config.Database
+
+	switch Dialect(c.Dialect) {
+	case Postgres:
+		gdb = NewPostgres(c)
+	default:
+		return nil, fmt.Errorf("database not support: %q", c.Dialect)
 	}
 
-	sqlDB, err := db.DB()
-	if err != nil {
-		panic(err)
-	}
-
-	sqlDB.SetMaxIdleConns(10)
-	sqlDB.SetMaxOpenConns(100)
-	sqlDB.SetConnMaxLifetime(time.Hour)
-	GormDB = db
-	return GormDB
+	return gdb, nil
 }

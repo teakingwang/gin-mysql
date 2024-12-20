@@ -1,38 +1,26 @@
-# Use the official Golang image to create a build artifact.
-# This is based on Debian and has many common packages pre-installed.
-# https://hub.docker.com/_/golang
+# 使用官方的 Golang 镜像作为基础镜像
 FROM golang:1.18-alpine AS builder
 
-# Set the Current Working Directory inside the container
+# 设置工作目录
 WORKDIR /app
 
-# Copy go mod and sum files
-COPY go.mod go.sum ./
+# 将项目的 Go 源码复制到 Docker 容器中
+COPY . /app
 
-# Download all dependencies. Dependencies will be cached if the go.mod and go.sum files are not changed
-RUN go mod download
+# 构建你的 Go 应用
+# 假设 build.sh 脚本负责编译并生成一个名为 gin-mysql 的可执行文件
+RUN chmod +x /app/build.sh
+RUN /app/build.sh
 
-# Copy the source from the current directory to the Working Directory inside the container
-COPY . .
+# 使用一个更小的镜像来运行你的应用
+FROM alpine:latest
 
-# Build the Go app
-RUN go build -o gin-mysql .
-
-# Use a lightweight base image to run the built binary
-FROM alpine:latest AS runner
-WORKDIR /root/
-
-# Copy the Pre-built binary file from the previous stage
+# 从构建阶段复制可执行文件到运行阶段
+# 假设 build.sh 生成的可执行文件在当前目录下（即 /workspace/gin-mysql）
 COPY --from=builder /app/gin-mysql .
 
-# Make the binary executable
-RUN chmod +x gin-mysql
-
-# Expose port 8080 to the Docker host
+# 暴露应用运行的端口（根据你的应用实际使用的端口进行修改）
 EXPOSE 8080
 
-# Define environment variable
-ENV NAME World
-
-# Run the application
+# 设置容器启动时执行的命令
 CMD ["./gin-mysql"]
